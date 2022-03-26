@@ -30,18 +30,21 @@ const bookSchema = new mongoose.Schema({
     },
     category: {
         type: String,
-        required: [true, "required category"]
+        required: [true, "required category"],
+        trim:true
     },
     subcategory: {
         type: String,
-        required: [true, "required"]
+        required: [true, "required"],
+        trim:true
     },
     reviews: {
         type: Number,
         default: 0,
         comment: {
             type: Number
-        }
+        },
+        trim:true
     },
     deletedAt: {
         type: Date,
@@ -58,4 +61,4 @@ const bookSchema = new mongoose.Schema({
     }
 
 }, { timestamps: true })
-module.exports = mongoose.model('books', bookSchema)
+module.exports = mongoose.model('book', bookSchema)
