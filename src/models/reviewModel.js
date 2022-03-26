@@ -1,0 +1,42 @@
+const { moment } = require('moment')
+const mongoose = require('mongoose')
+const objectId = mongoose.Schema.Types.ObjectId
+
+const reviewSchema = mongoose.Schema({
+
+    bookId: {
+        type: objectId,
+        required: [true, "required bookId"],
+        ref: 'books'
+    },
+    reviewedBy: {
+        type: String,
+        required: [true, "required data"],
+        default: 'Guest',
+
+
+    },
+    reviewedAt: {
+        type: Date,
+        required: [true, 'required date'],
+        default:Date.moment()
+    },
+    rating: {
+        type: Number,
+        min: 1,
+        max: 5,
+        required: [true, 'required rating']
+
+    },
+    review: {
+        type: [String, 'optional'],
+
+    },
+    isDeleted: {
+        type: Boolean,
+        default: false
+    }
+
+})
+module.exports = mongoose.model('reviews', reviewSchema)
+
