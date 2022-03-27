@@ -178,23 +178,47 @@ const updateBook = async function (req, res) {
     }
 }
 // delete book data ==================================================================
-const deleteBooks = async function (req, res){
+const deleteBook = async function(req,res){
     try{
-        const id = req.params.bookId;
-        const book = await bookModel.findOne({_id: id})
-        if (!book){
-            return res.status(404).send({Err: "book not found"})
-        }
-        if (book.isDeleted == true){
-            return res.status(400).send({status: false, msg: "This book is already deleted"})
-        }
-        const deletedBook = await bookModel.findOneAndUpdate({_id: id}, {isDeleted: true, deletedAt: moment().format()}, {new: true})
-        return res.status(200).send({status: true, msg: deletedBook})
-    }catch(e){
-        res.status(500).send({status: false, msg: e.message})
+        let bookId = req.params.bookId
+    if (!bookId) {
+        return res.status(400).send({ status: false, msg: "required bookId" })
+    }
+    if (!ObjectId.isValid(bookId)) {
+        return res.status(400).send({ status: false, msg: "invalid bookId" })
+    }
+    let bookIdNotExist = await bookModel.findOne({_id:bookId})
+    if (!bookIdNotExist) {
+        return res.status(404).send({ status: false, msg: "not found" })
+    }
+    if(bookIdNotExist.isDeleted == true){
+        return res.status(400).send({ status: false, msg: "This bookId already deleted" })
+
+    }
+
+    let data = {isDeleted:true,deletedAt:moment()}
+    const deleteData = await bookModel.findOneAndUpdate({_id:bookId,isDeleted:false},{$set:data},{new:true})
+    let result ={
+        _id:deleteData._id,
+        title:deleteData.title,
+        excerpt:deleteData.excerpt,
+        userId: deleteData.userId,
+        category: deleteData.category,
+        subcategory: deleteData.subcategory,
+        deleted: deleteData.isDeleted,
+        reviews: deleteData.reviews,
+        deletedAt: deleteData.deletedAt,
+        releasedAt: deleteData.releasedAt,
+        createdAt: deleteData.createdAt,
+        updatedAt: deleteData.updatedAt
+
+    }
+    return res.status(200).send({status:false,data:result})
+    }
+    catch(err){
+        return res.status(500).send({status:false,msg:err.message})
     }
 }
-
 
 
 
@@ -203,4 +227,4 @@ module.exports.createBook = createBook
 module.exports.getBooks = getBooks
 module.exports.getBookReview = getBookReview
 module.exports.updateBook = updateBook
-module.exports.deleteBooks = deleteBooks
+module.exports.deleteBook = deleteBook
