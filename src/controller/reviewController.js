@@ -1,5 +1,5 @@
 const reviewModel = require('../models/reviewModel')
-const objectId = require('mongoose').Schema.Types.ObjectId
+const objectId = require('mongoose').Types.ObjectId
 
 
 const isValid = function (value) {
@@ -17,7 +17,7 @@ const createReview = async function(req,res){
             return res.status(400).send({status:false,msg:"bookId is required"})
     
         }
-        if(!objectId.isValid(bookId)){
+        if(!objectId.isValid(bookId.trim())){
             return res.status(400).send({status:false,msg:"bookId is invalid"})
     
         }
@@ -25,15 +25,15 @@ const createReview = async function(req,res){
             return res.status(400).send({status:false,msg:"reviewer name  is required"})
     
         }
-        if(!isValid(reviewedAt)){
-            return res.status(400).send({status:false,msg:"date  is required"})
+        // if(!isValid(reviewedAt)){
+        //     return res.status(400).send({status:false,msg:"date  is required"})
     
-        }
+        // }
         if(!isValid(rating)){
             return res.status(400).send({status:false,msg:"rating is required"})
     
         }
-        //min and max rating 
+        //min and max rating pending
         let data = await reviewModel.create(reviewData)
         let result = {
             _id:data._id,
@@ -45,7 +45,7 @@ const createReview = async function(req,res){
     
     
         }
-        return res.status(200).send({status:false,data:result})
+        return res.status(201).send({status:true,data:result})
     
     
     }
