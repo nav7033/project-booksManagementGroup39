@@ -9,12 +9,12 @@ router.post('/register',userController.createUser)
 
 router.post('/login',userController.loginUser)
 router.post('/books',bookController.createBook)
-router.post('/reviews',reviewController.createReview)
+
 router.get('/books',bookController.getBooks)
 router.get('/books/:bookId',bookController.getBookReview)
 router.put('/books/:bookId',bookController.updateBook)
 router.delete('/books/:bookId',bookController.deleteBook)
-
+router.post('/books/:bookId/review',reviewController.createReview)
 
 
 

@@ -41,8 +41,8 @@ const createUser = async function (req, res) {
             return res.status(400).send({ status: false, msg: "email is required" })
         }
         if (!(/^\w+([\.-]?\w+)@\w+([\. -]?\w+)(\.\w{2,3})+$/.test(userData.email.trim()))) {
-            return res.status(400).send({ status: false, msg: "invalid email id" })
-        }
+             return res.status(400).send({ status: false, msg: "invalid email id" })
+         }
         let dupEmail = await userModel.findOne({ email: userData.email })
         if (dupEmail) {
             return res.status(400).send({ status: false, msg: "this email ID is already registered" })
