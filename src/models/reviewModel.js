@@ -2,12 +2,13 @@ const { moment } = require('moment')
 const mongoose = require('mongoose')
 const objectId = mongoose.Schema.Types.ObjectId
 
-const reviewSchema = mongoose.Schema({
+const reviewSchema = new mongoose.Schema({
 
     bookId: {
         type: objectId,
         required: [true, "required bookId"],
         ref: 'books',
+        trim:true
         
     },
     reviewedBy: {
