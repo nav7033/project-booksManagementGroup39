@@ -22,7 +22,7 @@ const createUser = async function (req, res) {
         }
         if (!titleValid(userData.title.trim())) {
             return res.status(400).send({ status: false, msg: "please Enter valid title" })
-         }
+        }
         if (!isValid(userData.name)) {
             return res.status(400).send({ status: false, msg: "name is required" })
         }
@@ -41,8 +41,8 @@ const createUser = async function (req, res) {
             return res.status(400).send({ status: false, msg: "email is required" })
         }
         if (!(/^\w+([\.-]?\w+)@\w+([\. -]?\w+)(\.\w{2,3})+$/.test(userData.email.trim()))) {
-             return res.status(400).send({ status: false, msg: "invalid email id" })
-         }
+            return res.status(400).send({ status: false, msg: "invalid email id" })
+        }
         let dupEmail = await userModel.findOne({ email: userData.email })
         if (dupEmail) {
             return res.status(400).send({ status: false, msg: "this email ID is already registered" })
@@ -78,14 +78,17 @@ const createUser = async function (req, res) {
 //userLogin=============================
 const loginUser = async function (req, res) {
     try {
-        let {email,password}= req.body
+        let { email, password } = req.body
+        if(!email || !password){
+            return res.status(400).send({status:false,msg:"required email or password"})
+        }
 
-        let user = await userModel.findOne({ email: email, password: password });
+        let user = await userModel.findOne({ email: email.trim(), password: password.trim() });
         if (!user)
             return res.status(400).send({ status: false, msg: "username or the password is not correct" });
 
 
-        let token = jwt.sign({ userId: user._id, iat: Math.floor(Date.now() / 1000) - 30 }, "secret-key", { expiresIn: '1h' });
+        let token = jwt.sign({ userId: user._id.toString() }, "secret-key", { expiresIn: '1h' });
         res.setHeader("x-api-key", token);
         res.status(200).send({ status: true, data: token });
     }
