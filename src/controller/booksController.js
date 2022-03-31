@@ -176,7 +176,7 @@ const getBookReview = async function (req, res) {
             result['reviewsData'] = "No review for this books"
             return res.status(200).send({ status: false, data: result })
         }
-        result['reviewsData'] = eachReview
+        result.reviewsData = eachReview
         return res.status(200).send({ status:true, data: result })
 
 

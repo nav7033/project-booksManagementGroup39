@@ -47,14 +47,17 @@ const createUser = async function (req, res) {
         if (dupEmail) {
             return res.status(400).send({ status: false, msg: "this email ID is already registered" })
         }
+        if (!isValid(userData.password)) {
+            return res.status(400).send({ status: false, msg: "password is required" })
+        }
         if (!(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[a-zA-Z0-9]{8,}$/).test(userData.password)) {
             return res.status(400).send({ status: false, msg: "password should contain at least [1,.,a-zA] " })
 
         }
-        if (!isValid(userData.password)) {
-            return res.status(400).send({ status: false, msg: "password is required" })
+        let validPass = userData.password.trim().length >= 8 && userData.password.trim().length <= 15
+        if(!validPass){
+            return res.status(400).send({ status: false, msg: "password length should be 8 to 15" })
         }
-
         let saveData = await userModel.create(userData)
         let result = {
             _id: saveData._id,
