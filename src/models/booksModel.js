@@ -1,5 +1,3 @@
-
-const { min } = require('moment')
 const mongoose = require('mongoose')
 const objectId = mongoose.Schema.Types.ObjectId
 
@@ -20,7 +18,7 @@ const bookSchema = new mongoose.Schema({
         type: objectId,
         required: [true, "required userId"],
         ref: 'user',
-        trim:true
+        trim: true
 
     },
     ISBN: {
@@ -32,12 +30,12 @@ const bookSchema = new mongoose.Schema({
     category: {
         type: String,
         required: [true, "required category"],
-        trim:true
+        trim: true
     },
     subcategory: {
         type: String,
         required: [true, "required"],
-        trim:true
+        trim: true
     },
     reviews: {
         type: Number,
@@ -45,7 +43,7 @@ const bookSchema = new mongoose.Schema({
         comment: {
             type: Number
         },
-        trim:true
+        trim: true
     },
     deletedAt: {
         type: Date,
@@ -57,8 +55,8 @@ const bookSchema = new mongoose.Schema({
     releasedAt: {
         type: Date,
         required: [true, "required date format(yyyy-mm-dd)"],
-        default:Date.now(),
-        format:'YYYY-MM-DD'
+        default: Date.now(),
+        format: 'YYYY-MM-DD'
 
     }
 
