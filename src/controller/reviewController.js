@@ -117,6 +117,9 @@ const reviewUpdate = async function (req, res) {
         if (!objectId.isValid(reviewId)) {
             return res.status(400).send({ status: false, msg: " reviewId is invalid" })
         }
+        if(!(reviewData.rating > 0 && reviewData.rating <=5) ){
+            return res.status(400).send({ status: false, msg: "please enter valid rating" })
+        }
         //get review details with books data
         book = book.toObject()
         let updated = await reviewModel.findOneAndUpdate({ _id: reviewId, isDeleted: false }, { $set: { reviewedBy: reviewData.reviewedBy, review: reviewData.review, rating: reviewData.rating } }, { new: true })
@@ -126,7 +129,7 @@ const reviewUpdate = async function (req, res) {
             return res.status(404).send({ status: false, msg: book })
 
         }
-        book.reviewData = allReview
+        book.reviewData = updated
         return res.status(400).send({ status: false, data: book })
     }
     catch (err) {

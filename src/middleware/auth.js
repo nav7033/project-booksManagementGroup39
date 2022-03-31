@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken')
 const bookModel = require('../models/booksModel')
+const ObjectId = require('mongoose').Types.ObjectId
 
 
 
@@ -29,7 +30,7 @@ const authentication = async function (req, res, next) {
         next()
     }
     catch (err) {
-        return res.status(500).send({ status: false, msg: err.message })
+        return res.status(400).send({ status: false, msg: err.message })
     }
 
 
@@ -46,6 +47,9 @@ const authorize = async function (req, res, next) {
 
         if (!bookId) {
             return res.status(400).send({ status: false, msg: "bookId is required" })
+        }
+        if (!ObjectId.isValid(bookId)) {
+            return res.status(400).send({ status: false, msg: "bookId invalid" })
         }
         let time  = Math.floor(Date.now()/1000)
         if(decodedToken.exp<time){

@@ -48,7 +48,7 @@ const createUser = async function (req, res) {
             return res.status(400).send({ status: false, msg: "this email ID is already registered" })
         }
         if (!(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[a-zA-Z0-9]{8,}$/).test(userData.password)) {
-            return res.status(400).send({ status: false, msg: "password should contain at least [1,@.,a-zA] " })
+            return res.status(400).send({ status: false, msg: "password should contain at least [1,.,a-zA] " })
 
         }
         if (!isValid(userData.password)) {
