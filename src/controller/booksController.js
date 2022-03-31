@@ -271,7 +271,7 @@ const deleteBook = async function (req, res) {
             updatedAt: deleteData.updatedAt
 
         }
-        return res.status(200).send({ status: false, data: result })
+        return res.status(200).send({ status:true, data: result })
     }
     catch (err) {
         return res.status(500).send({ status: false, msg: err.message })

@@ -3,6 +3,7 @@ const bookModel = require('../models/booksModel')
 const objectId = require('mongoose').Types.ObjectId
 
 
+
 const isValid = function (value) {
     if (typeof value == 'undefined' || value === null) return false
     if (typeof value == 'string' && value.trim().length === 0) return false
@@ -130,7 +131,7 @@ const reviewUpdate = async function (req, res) {
 
         }
         book.reviewData = updated
-        return res.status(400).send({ status: false, data: book })
+        return res.status(200).send({ status:true, data: book })
     }
     catch (err) {
         return res.status(500).send({ status: false, msg: err.message })
@@ -155,9 +156,11 @@ let reviewDelete = async function (req, res) {
         if (!objectId.isValid(reviewId)) {
             return res.status(400).send({ status: false, msg: " reviewId is invalid" })
         }
-        let deleteData = await reviewModel.findOneAndUpdate({ _id: reviewId, isDeleted: false }, { $set: { isDeleted: true, deletedAt: moment() } }, { new: true })
+        
+
+        let deleteData = await reviewModel.findOneAndUpdate({ _id: reviewId, isDeleted: false }, { $set: { isDeleted: true, deletedAt:Date.now() } }, { new: true })
         let reviewCountDec = await bookModel.findOneAndUpdate({ _id: bookId, isDeleted: false }, { $inc: { reviews: -1 } })
-        return res.status(400).send({ status: false, msg: deleteData })
+        return res.status(200).send({ status:true, msg: deleteData })
     }
     catch (err) {
         return res.status(500).send({ status: false, msg: err.message })
