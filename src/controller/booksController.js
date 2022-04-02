@@ -126,12 +126,13 @@ const getBooks = async function (req, res) {
                 filterCondition['subcategory'] = subcategory.trim()
             }
         }
+
         let filterBook = await bookModel.find(filterCondition).sort({ title: 1 }).select({ title: 1, excerpt: 1, userId: 1, category: 1, reviews: 1, releasedAt: 1 })
         if (!filterBook) {
             return res.status(404).send({ status: false, msg: "book not found" })
         }
         //filterBook['data'] = filterBook
-        return res.status(200).send({ status:true, msg: "success", data: filterBook })
+        return res.status(200).send({ status: true, msg: "success", data: filterBook })
 
     }
     catch (err) {
@@ -177,7 +178,7 @@ const getBookReview = async function (req, res) {
             return res.status(200).send({ status: false, data: result })
         }
         result.reviewsData = eachReview
-        return res.status(200).send({ status:true, data: result })
+        return res.status(200).send({ status: true, data: result })
 
 
 
@@ -193,39 +194,37 @@ const updateBook = async function (req, res) {
     try {
         let bookId = req.params.bookId
         let { title, excerpt, releasedAt, ISBN } = req.body
-        if (!isValid(title)) {
-            return res.status(400).send({ status: false, msg: "required title" })
 
-        }
-        if (!isValid(excerpt)) {
-            return res.status(400).send({ status: false, msg: "required excerpt" })
-
-        }
-        if (!isValid(releasedAt)) {
-            return res.status(400).send({ status: false, msg: "required releasedAt" })
-
-        }
-        if (!isValid(ISBN)) {
-            return res.status(400).send({ status: false, msg: "required Isbn" })
+        if (title) {
+            let dupBook = await bookModel.findOne({ title: title })
+            if (dupBook) {
+                return res.status(400).send({ status: false, msg: "this title already updated" })
+            }
 
         }
 
-        let dupBook = await bookModel.findOne({ title: title, ISBN: ISBN })
-        if (dupBook) {
-            return res.status(400).send({ status: false, msg: "this title and ISBN already updated" })
+        if (ISBN) {
+            let dupBook1 = await bookModel.findOne({ ISBN: ISBN })
+            if (dupBook1) {
+                return res.status(400).send({ status: false, msg: "this ISBN already updated" })
+            }
+
         }
+
         if (!bookId) {
             return res.status(400).send({ status: false, msg: "bookId is required" })
         }
         if (!ObjectId.isValid(bookId)) {
             return res.status(400).send({ status: false, msg: "invalid bookId" })
         }
-        if (!/((\d{4}[\/-])(\d{2}[\/-])(\d{2}))/.test(releasedAt)) {
-            return res.status(400).send({ status: false, msg: "this data format /YYYY-MM-DD/ accepted " })
+        if (releasedAt) {
+            if (!/((\d{4}[\/-])(\d{2}[\/-])(\d{2}))/.test(releasedAt)) {
+                return res.status(400).send({ status: false, msg: "this data format /YYYY-MM-DD/ accepted " })
 
+            }
         }
-        let updateBookData = { title: title, excerpt: excerpt, releasedAt: releasedAt, ISBN: ISBN }
-        let updated = await bookModel.findOneAndUpdate({ _id: bookId, isDeleted: false }, { $set: updateBookData }, { new: true })
+
+        let updated = await bookModel.findOneAndUpdate({ _id: bookId, isDeleted: false }, { $set: req.body }, { new: true })
         if (!updated) {
             return res.status(404).send({ status: false, msg: "data not found " })
         }
@@ -271,7 +270,7 @@ const deleteBook = async function (req, res) {
             updatedAt: deleteData.updatedAt
 
         }
-        return res.status(200).send({ status:true, data: result })
+        return res.status(200).send({ status: true, data: result })
     }
     catch (err) {
         return res.status(500).send({ status: false, msg: err.message })

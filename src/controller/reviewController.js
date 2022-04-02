@@ -36,6 +36,9 @@ const createReview = async function (req, res) {
             return res.status(400).send({ status: false, msg: "bookId  is invalid" })
 
         }
+        if(reviewData.bookId != bookId){
+            return res.status(400).send({status:false,msg:"params bookId and body bookId is not same "})
+        }
         const bookData = await bookModel.findOne({ _id: reviewData.bookId, isDeleted: false })
         if (!bookData) {
             return res.status(404).send({ status: false, msg: "this book id is not present in database" })
