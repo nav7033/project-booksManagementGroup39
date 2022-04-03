@@ -195,31 +195,42 @@ const updateBook = async function (req, res) {
     try {
         let bookId = req.params.bookId
         let { title, excerpt, releasedAt, ISBN } = req.body
-
-        if (title) {
-            let dupBook = await bookModel.findOne({ title: title })
-            if (dupBook) {
-                return res.status(400).send({ status: false, msg: "this title already updated" })
-            }
-
-        }
-
-        if (ISBN) {
-            let dupBook1 = await bookModel.findOne({ ISBN: ISBN })
-            if (dupBook1) {
-                return res.status(400).send({ status: false, msg: "this ISBN already updated" })
-            }
-
-        }
-
         if (!bookId) {
             return res.status(400).send({ status: false, msg: "bookId is required" })
         }
         if (!ObjectId.isValid(bookId)) {
             return res.status(400).send({ status: false, msg: "invalid bookId" })
         }
-        if (releasedAt) {
-            if (!/((\d{4}[\/-])(\d{2}[\/-])(\d{2}))/.test(releasedAt)) {
+        let data = await bookModel.findOne({_id:bookId,isDeleted:false})
+        if(!data){
+            return res.status(404).send({status:false,msg:"book with thats bookId not found"})
+        }
+        let bookDetails = req.body
+        if(Object.keys(bookDetails).length==0){
+            return res.status(400).send({ status: false, msg: "enter the details to update " }) 
+        }
+
+        if (Object.keys(bookDetails).includes('title')) {
+            if(bookDetails.title.trim().length == 0){
+                return res.status(400).send({ status: false, msg: "enter the title to update" })
+            }
+            let dupTitle = await bookModel.findOne({ title: title.trim() })
+            if (dupTitle) {
+                return res.status(400).send({ status: false, msg: "this title already updated" })
+            }
+        }
+        if (Object.keys(bookDetails).includes('ISBN')) {
+            if(bookDetails.ISBN.trim().length == 0){
+                return res.status(400).send({ status: false, msg: "enter the ISBN to update" })
+            }
+            let dupIsbn = await bookModel.findOne({ ISBN: ISBN.trim() })
+            if (dupIsbn) {
+                return res.status(400).send({ status: false, msg: "this ISBN already updated" })
+            }
+
+        }
+        if (Object.keys(bookDetails).includes('releasedAt')) {
+            if (!/((\d{4}[\/-])(\d{2}[\/-])(\d{2}))/.test(releasedAt.trim())) {
                 return res.status(400).send({ status: false, msg: "this data format /YYYY-MM-DD/ accepted " })
 
             }
