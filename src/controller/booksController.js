@@ -4,6 +4,7 @@ const userModel = require('../models/userModel')
 const moment = require('moment')
 const ObjectId = require('mongoose').Types.ObjectId
 
+
 const isValid = function (value) {
     if (typeof value == 'undefined' || value === null) return false
     if (typeof value == 'string' && value.trim().length === 0) return false
@@ -15,7 +16,7 @@ const isValid = function (value) {
 const createBook = async function (req, res) {
     try {
         let bookData = req.body
-
+        
         if (Object.keys(bookData) == 0) {
             return res.status(400).send({ status: false, msg: "bookDetails is required " })
         }
@@ -57,7 +58,7 @@ const createBook = async function (req, res) {
         if (!/((\d{4}[\/-])(\d{2}[\/-])(\d{2}))/.test(bookData.releasedAt)) {
             return res.status(400).send({ status: false, msg: "this date format /YYYY-MM-DD/ Accepted" })
         }
-
+        
         let data = await bookModel.create(bookData)
         let result = {
             _id: data._id,
@@ -228,7 +229,7 @@ const updateBook = async function (req, res) {
         if (!updated) {
             return res.status(404).send({ status: false, msg: "data not found " })
         }
-        return res.status(200).send({ status: false, data: updated })
+        return res.status(200).send({status:true, data: updated })
     }
     catch (err) {
         return res.status(500).send({ status: false, msg: err.message })
@@ -253,7 +254,7 @@ const deleteBook = async function (req, res) {
 
         }
 
-        let data = { isDeleted: true, deletedAt: moment() }
+        let data = { isDeleted: true, deletedAt: Date.now() }
         const deleteData = await bookModel.findOneAndUpdate({ _id: bookId, isDeleted: false }, { $set: data }, { new: true })
         let result = {
             _id: deleteData._id,
